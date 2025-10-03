@@ -1,0 +1,11 @@
+name: assignment-week4-workflow
+
+# Put all three just in case
+on: [workflow_dispatch, push, pull_request]
+
+jobs:
+  CICD:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
