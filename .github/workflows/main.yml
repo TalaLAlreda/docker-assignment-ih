@@ -6,6 +6,23 @@ on: [workflow_dispatch, push, pull_request]
 jobs:
   CICD:
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - name: Setup SSH key
+      
+        run: |
+          echo "${{ secrets.AZURE_SSH_KEY }}" > id_rsa
+          chmod 600 id_rsa
+        
+      - name: Deployment
+        run: |
+          ssh -i ${{ secrets.AZURE_SSH_KEY }} ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_VM_IP }}
+          if [ ! -d docker-assignment-ih ]; then
+            git clone https://github.com/TalaLAlreda/docker-assignment-ih.git && cd docker-assignment-ih
+          else
+            cd docker-assignment-ih && git pull
+          fi
+          docker-compose down && docker-compose up --build
+          
